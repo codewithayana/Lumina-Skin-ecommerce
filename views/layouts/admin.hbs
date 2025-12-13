@@ -18,7 +18,8 @@
 </head>
 <body class="dark">
   <div class="screen-overlay"></div>
-{{#unless (eq title "Admin Login")}}
+
+  {{#unless (eq title "Admin Login")}}
     {{> adminSidebar}} <!-- Sidebar partial -->
   {{/unless}}
 {{#if (eq title "Admin Login")}}
@@ -29,13 +30,14 @@
 
   {{#unless (eq title "Admin Login")}}
     {{> adminHeader}} <!-- Header partial -->
-  {{/unless}} 
+  {{/unless}}
 
     {{{body}}}          <!-- Page content -->
 
   {{#unless (eq title "Admin Login")}}
     {{> adminFooter}}
-  {{/unless}}     <!-- Footer partial --> 
+  {{/unless}}     <!-- Footer partial -->
+
  </main>
     <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
