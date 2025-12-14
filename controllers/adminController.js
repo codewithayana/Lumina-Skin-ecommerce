@@ -26,3 +26,14 @@ export const adminAddProductPage = async (req, res) => {
     res.status(500).send("Something went wrong loading the Add Product page.");
   }
 };
+
+export const adminProductsListPage = async (req, res) => {
+    try {
+        res.render('admin/products-list', {
+            title: 'Product List'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+};

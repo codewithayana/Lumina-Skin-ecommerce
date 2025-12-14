@@ -26,7 +26,7 @@ export const createProduct = async (req, res) => {
       stock: parseInt(data.stock),
       rating: "",
       picturePath: "pictures",
-    //   picturePath: pictures,
+      //   picturePath: pictures,
       thumbnail: "",
       createdAt: new Date(),
       updatedAt: new Date(),
