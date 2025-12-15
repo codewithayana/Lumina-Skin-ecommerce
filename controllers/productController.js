@@ -3,47 +3,67 @@ import connectDB from "../config/db.js";
 import collection from "../config/collection.js";
 
 export const createProduct = async (req, res) => {
-  console.log("crete product route working>>>>>>>>", req.body);
+  console.log("create product route working >>>>>>>>");
+  console.log("Body:", req.body);
+  console.log("Files:", req.files);
+
   try {
     const data = req.body;
-    // console.log(data);
 
-    // console.log(req.files); // array of files
-    // const pictures = req.files.map(
-    //   (file) => `/userAssets/pictures/${file.filename}`
-    // );
-    // console.log(pictures);
+    // Thumbnail (single)
+    const thumbnail =
+      req.files?.thumbnail?.[0]?.filename || null;
+
+    //Product Images (multiple)
+    const productImages =
+      req.files?.productImages?.map(file => file.filename) || [];
 
     const productData = {
       productId: uuidv7(),
-      name: data.name,
+      productName: data.name,
       shortDesc: data.shortDesc,
       description: data.description,
       category: data.category,
       brand: data.brand,
-      price: parseInt(data.price),
-      discountPrice: parseInt(data.discountPrice),
-      stock: parseInt(data.stock),
+      price: Number(data.price),
+      discountPrice: Number(data.discountPrice),
+      stock: Number(data.stock),
       rating: "",
+      thumbnail: thumbnail,           // ✅ fixed
+      images: productImages,           // ✅ added
       picturePath: "pictures",
-      //   picturePath: pictures,
-      thumbnail: "",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    // console.log(productData);
 
     const db = await connectDB();
     const result = await db
       .collection(collection.PRODUCTS_COLLECTION)
       .insertOne(productData);
 
-    console.log("✅ New product added:", result);
+    console.log("✅ New product added:", result.insertedId);
 
     return res.redirect("/admin/add-product");
-    // return res.redirect("/admin/products-list");
+    // or: res.redirect("/admin/products-list");
+
   } catch (error) {
-    console.log(error);
+    console.error("❌ Create product error:", error);
+    res.status(500).send("Failed to create product");
+  }
+};
+
+
+export const getAllProducts = async () => {
+  try {
+    const db = await connectDB();
+    const products = await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .find({})
+      .toArray();
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
   }
 };

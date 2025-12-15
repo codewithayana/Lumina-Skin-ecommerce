@@ -1,3 +1,5 @@
+import { getAllProducts } from "./productController.js";
+
 export const adminLoginPage = async (req, res) => {
   res.render("admin/adminLogin", { layout: "admin", title: "Admin Login" });
 };
@@ -28,12 +30,19 @@ export const adminAddProductPage = async (req, res) => {
 };
 
 export const adminProductsListPage = async (req, res) => {
-    try {
-        res.render('admin/products-list', {
-            title: 'Product List'
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Server Error');
-    }
+  try {
+
+    const productsData = await getAllProducts();
+    
+    console.log("><><><><< Products", productsData);
+
+    res.render("admin/products-list", {
+      layout: "admin",
+      title: "Product List",
+      products: productsData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
 };
