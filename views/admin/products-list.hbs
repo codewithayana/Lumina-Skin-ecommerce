@@ -7,7 +7,8 @@
     <div>
       <a href="#" class="btn btn-light rounded font-md">Export</a>
       <a href="#" class="btn btn-light rounded font-md">Import</a>
-      <a href="/admin/add-product" class="btn btn-primary btn-sm rounded">Create new</a>
+      <a href="/admin/add-product" class="btn btn-primary btn-sm rounded">Create
+        new</a>
     </div>
   </div>
   <header class="card card-body mb-4">
@@ -38,82 +39,94 @@
     <!-- col.// -->
     {{#each products}}
       <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-        <div class="card shadow-sm border-0 h-100 product-card">
+        <div class="card border-0 shadow-sm h-100 product-card overflow-hidden">
 
-          <!-- Product Image -->
+          <!-- Image Wrapper -->
           <div class="position-relative">
+
+            <!-- Main Thumbnail -->
             <img
-              src="/userAssets/pictures/{{this.thumbnail}}"
-              class="card-img-top"
+              src="/userAssets/uploads/{{this.thumbnail}}"
               alt="{{this.productName}}"
-              style="height: 200px; object-fit: cover;"
+              class="w-100"
+              style="height:220px; object-fit:cover;"
             />
 
             <!-- Category Badge -->
-            <span class="badge bg-dark position-absolute top-0 start-0 m-2">
+            <span
+              class="badge bg-dark position-absolute top-0 start-0 m-2 px-3 py-1 rounded-pill"
+            >
               {{this.category}}
             </span>
+
+            <!-- Mini Images (Overlay Bottom Right) -->
+            {{#if this.images}}
+              <div class="position-absolute bottom-0 end-0 m-2 d-flex gap-1">
+                {{#each this.images}}
+                  <img
+                    src="/userAssets/uploads/{{this}}"
+                    class="rounded border"
+                    style="height:38px;width:38px;object-fit:cover;background:#fff;"
+                  />
+                {{/each}}
+              </div>
+            {{/if}}
+
           </div>
 
           <!-- Card Body -->
-          <div class="card-body d-flex flex-column">
+          <div class="card-body py-2 px-3">
 
             <!-- Product Name -->
-            <h6 class="card-title fw-bold text-truncate">
+            <h6 class="fw-semibold mb-1 text-truncate">
               {{this.productName}}
             </h6>
 
             <!-- Brand -->
-            <small class="text-muted mb-2">
-              Brand:
-              <strong>{{this.brand}}</strong>
+            <small class="text-muted d-block mb-1">
+              {{this.brand}}
             </small>
 
-            <!-- Price Section -->
-            <div class="mb-2">
-              <span class="fw-bold text-success fs-5">
-                ₹
-                {{this.price}}
+            <!-- Price Row -->
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="fw-bold text-success">
+                ₹{{this.discountPrice}}
               </span>
-              {{#if this.discountPrice}}
-                <small class="text-muted text-decoration-line-through ms-2">
-                  ₹
-                  {{this.discountPrice}}
-                </small>
-              {{/if}}
+              <small class="text-muted text-decoration-line-through">
+                ₹{{this.price}}
+              </small>
             </div>
 
-            <!-- Stock Status -->
+            <!-- Stock -->
             {{#if this.stock}}
-              <span class="badge bg-success mb-3">
-                In Stock ({{this.stock}})
-              </span>
+              <small class="text-success fw-semibold">
+                ● In Stock ({{this.stock}})
+              </small>
             {{else}}
-              <span class="badge bg-danger mb-3">
-                Out of Stock
-              </span>
+              <small class="text-danger fw-semibold">
+                ● Out of Stock
+              </small>
             {{/if}}
 
-            <!-- Actions -->
-            <div class="mt-auto d-flex justify-content-between">
-              <a
-                href="/admin/products/edit/{{this._id}}"
-                class="btn btn-sm btn-outline-primary"
-              >
-                <i class="material-icons md-edit"></i>
-                Edit
-              </a>
-
-              <a
-                href="/admin/products/delete/{{this._id}}"
-                class="btn btn-sm btn-outline-danger"
-                onclick="return confirm('Are you sure you want to delete this product?')"
-              >
-                <i class="material-icons md-delete"></i>
-                Delete
-              </a>
-            </div>
           </div>
+
+          <!-- Actions -->
+          <div class="px-3 pb-3 d-flex gap-2">
+            <a
+              href="/admin/products/edit/{{this._id}}"
+              class="btn btn-sm btn-outline-primary w-50"
+            >
+              Edit
+            </a>
+            <a
+              href="/admin/products/delete/{{this._id}}"
+              class="btn btn-sm btn-outline-danger w-50"
+              onclick="return confirm('Are you sure?')"
+            >
+              Delete
+            </a>
+          </div>
+
         </div>
       </div>
 

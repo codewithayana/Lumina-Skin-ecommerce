@@ -4,6 +4,7 @@ import {
   adminDashboardPage,
   adminLoginPage,
   adminProductsListPage,
+  adminOrdersListPage,
 } from "../controllers/adminController.js";
 import { adminLogin } from "../controllers/adminAuth.js";
 import { createProduct } from "../controllers/productController.js";
@@ -29,5 +30,7 @@ adminRoutes.post(
 );
 
 adminRoutes.get("/products-list", adminProductsListPage);
+
+adminRoutes.get("/orders-list", adminOrdersListPage);
 
 export default adminRoutes;

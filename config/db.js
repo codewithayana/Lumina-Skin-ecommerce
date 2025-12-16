@@ -8,10 +8,10 @@ const DB_Name = process.env.DATABASE
 
 let client;
 
-const connectDB = async () => {
+const connectToDatabase = async (databaseName) => {
   if (client) {
     console.log("\nProcess ID:", process.pid, "- Using Cached Connection\n");
-    return client.db(DB_Name);
+    return client.db(databaseName);
   }
 
   try {
@@ -36,4 +36,4 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+export default connectToDatabase;
