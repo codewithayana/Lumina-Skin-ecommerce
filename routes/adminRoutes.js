@@ -5,9 +5,15 @@ import {
   adminLoginPage,
   adminProductsListPage,
   adminOrdersListPage,
+  adminProductEditPage,
 } from "../controllers/adminController.js";
 import { adminLogin } from "../controllers/adminAuth.js";
-import { createProduct } from "../controllers/productController.js";
+import {
+  createProduct,
+  deleteProduct,
+  editProductDetails,
+  editProductDetailsPage,
+} from "../controllers/productController.js";
 import { uploadFiles } from "../middleware/uploadMiddleware.js";
 
 const adminRoutes = Router({ mergeParams: true });
@@ -19,6 +25,10 @@ adminRoutes.post("/login", adminLogin);
 adminRoutes.get("/dashboard", adminDashboardPage);
 
 adminRoutes.get("/add-product", adminAddProductPage);
+
+adminRoutes.get("/products/edit/:id", adminProductEditPage);
+
+adminRoutes.post("/edit-product/:id", editProductDetailsPage);
 
 adminRoutes.post(
   "/add-product",
@@ -32,5 +42,7 @@ adminRoutes.post(
 adminRoutes.get("/products-list", adminProductsListPage);
 
 adminRoutes.get("/orders-list", adminOrdersListPage);
+
+adminRoutes.post("/products/delete/:id", deleteProduct);
 
 export default adminRoutes;

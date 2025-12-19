@@ -1,5 +1,5 @@
 <section class="content-main">
-  <form action="/admin/add-product" method="POST" enctype="multipart/form-data"> 
+  <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
     <div class="row">
       <div class="col-6">
         <div class="content-header">
@@ -177,13 +177,12 @@
                 </div>
 
                 <!-- Product Images -->
-                <div class="mb-4">
-                  <label class="form-label">Product Images (Max 3)</label>
+                <div class="card-body">
+                  <label class="form-label">Product Images</label>
                   <input
                     class="form-control"
                     type="file"
                     name="productImages"
-                    accept="image/*"
                     multiple
                     required
                   />
