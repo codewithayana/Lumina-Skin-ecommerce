@@ -53,53 +53,53 @@ export const bannerData = [
 
 export const brandData = [
   {
-    name: "Rolex",
-    image: "/userAssets/imgs/Logos/rolex logo.jpg",
+    name: "Aqualogica",
+    image: "/userAssets/imgs/Logos/aqualogica.png",
     link: "/shop-grid-right.html",
   },
   {
-    name: "Fossil",
-    image: "/userAssets/imgs/Logos/fossil.jpg",
+    name: "CeraVe",
+    image: "/userAssets/imgs/banner/cerave.avif",
     link: "/shop-grid-right.html",
   },
   {
-    name: "Tag Heuer",
-    image: "/userAssets/imgs/Logos/Tag Heuer logo.png",
-    link: "/shop-grid-right.html",
-  },
-  // {
-  //   name: "Patek Philippe",
-  //   image: "/userAssets/imgs/logos/Patek Philippe logo.png",
-  //   link: "/shop-grid-right.html",
-  // },
-  {
-    name: "Audemars Piguet",
-    image: "/userAssets/imgs/Logos/Audemars Piguet logo.jpg",
+    name: "Dr. Sheth's",
+    image: "/userAssets/imgs/Logos/la-roche-posay.png",
     link: "/shop-grid-right.html",
   },
   {
-    name: "Cartier",
-    image: "/userAssets/imgs/Logos/Cartier logo.png",
+    name: "The Ordinary",
+    image: "/userAssets/imgs/banner/ordinary.avif",
     link: "/shop-grid-right.html",
   },
   {
-    name: "Breitling",
-    image: "/userAssets/imgs/Logos/Breitling logo.png",
+    name: "Neutrogena",
+    image: "/userAssets/imgs/banner/neutrogena.avif",
     link: "/shop-grid-right.html",
   },
   {
-    name: "Titan",
-    image: "/userAssets/imgs/Logos/titan.jpg",
+    name: "Minimalist",
+    image: "/userAssets/imgs/Logos/minimalist.png",
     link: "/shop-grid-right.html",
   },
   {
-    name: "Casio",
-    image: "/userAssets/imgs/Logos/casio.jpg",
+    name: "Mamaearth",
+    image: "/userAssets/imgs/banner/mamaearth-logo-png_seeklogo-487672.webp",
     link: "/shop-grid-right.html",
   },
   {
-    name: "IWC Schaffhausen",
-    image: "/userAssets/imgs/Logos/IWC Schaffhausen logo.png",
+    name: "Plum",
+    image: "/userAssets/imgs/banner/plum.avif",
+    link: "/shop-grid-right.html",
+  },
+  {
+    name: "Dot & Key",
+    image: "/userAssets/imgs/banner/dk.avif",
+    link: "/shop-grid-right.html",
+  },
+  {
+    name: "Simple",
+    image: "/userAssets/imgs/Logos/simple.png",
     link: "/shop-grid-right.html",
   },
 ];
