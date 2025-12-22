@@ -7,7 +7,7 @@ export const bannerData = [
     description:
       "Reveal your natural glow with our gentle, effective skincare essentials.",
     link: "/shop",
-    image: "/userAssets/imgs/banner/banner image 1.jpg",
+    image: "/userAssets/imgs/banner/banner img 0.png",
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ export const bannerData = [
     description:
       "Upgrade your skincare routine with exclusive Lumina Skin offers.",
     link: "/shop",
-    image: "/userAssets/imgs/banner/banner men 2.jpg",
+    image: "/userAssets/imgs/banner/lumina banner.webp",
   },
   {
     id: 4,
