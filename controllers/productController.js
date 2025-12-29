@@ -5,7 +5,6 @@ import path from "path";
 import { ObjectId } from "mongodb";
 import collection from "../config/collection.js";
 
-
 const deleteFile = (filePath) => {
   if (!filePath) return;
   const fullPath = path.join("public/userAssets/uploads", filePath); // adjust folder path if needed
@@ -20,26 +19,37 @@ export const createProduct = async (req, res) => {
   try {
     const data = req.body;
 
+    const categoryMap = {
+  Men: "Men",
+  Women: "Women",
+  Unisex: "Unisex",
+};
+
+
+
     // Thumbnail (single)
     const thumbnail = req.files?.thumbnail?.[0]?.filename || null;
 
     //Product Images (multiple)
     const productImages =
-      req.files?.productImages?.map((file) => file.filename) || [];
+      req.files?.productImages?.map(
+        (file) => `/userAssets/uploads/${file.filename}`
+      ) || [];
+
 
     const productData = {
       productId: uuidv7(),
       productName: data.name,
       shortDesc: data.shortDesc,
       description: data.description,
-      category: data.category,
+      category: categoryMap[data.category] || data.category,
       brand: data.brand,
       price: Number(data.price),
       discountPrice: Number(data.discountPrice),
       stock: Number(data.stock),
-      rating: "",
-      thumbnail: thumbnail, // ✅ fixed
-      images: productImages, // ✅ added
+      rating: Number(data.rating),
+      thumbnail: `/userAssets/uploads/${thumbnail}`,
+      images: productImages, 
       picturePath: "pictures",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -58,127 +68,127 @@ export const createProduct = async (req, res) => {
     console.error("❌ Create product error:", error);
     res.status(500).send("Failed to create product");
   }
-}
+};
 
-    export const getAllProducts = async () => {
-    try {
-      const db = await connectDB();
-      const products = await db
-        .collection(collection.PRODUCTS_COLLECTION)
-        .find({})
-        .toArray();
+export const getAllProducts = async () => {
+  try {
 
-      return products;
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      throw error;
+    const db = await connectDB();
+    const products = await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .find({})
+      .toArray();
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+//  edit and update prooducts
+export const editProductDetailsPage = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const db = await connectDB();
+
+    const productDetailsEdit = await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .findOne({ _id: new ObjectId(String(productId)) });
+
+    res.render("admin/productDetailsEdit", {
+      layout: "admin",
+      title: "Edit Product Details",
+      productDetails: productDetailsEdit,
+    });
+  } catch (error) {
+    console.error("❌ Edit product details error:", error);
+    res.status(500).send("Failed to edit product details");
+  }
+};
+
+export const editProductDetails = async (req, res) => {
+  console.log(
+    "edit product function called >>>>>>>>>>",
+    req.params.id,
+    req.body
+  );
+  try {
+    const productId = req.params.id;
+    const data = req.body;
+
+    // Map form fields to database fields
+    const updatedData = {
+      productName: data.title,
+      shortDescription: data.shortDescription,
+      description: data.description,
+      category: data.category,
+      brand: data.brand,
+      price: parseInt(data.price),
+      discountPrice: parseInt(data.discountPrice) || null,
+      stock: parseInt(data.stock),
+      rating: data.rating ? parseFloat(data.rating) : 0,
+      updatedAt: new Date(),
+    };
+
+    const db = await connectDB();
+
+    await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .updateOne(
+        { _id: new ObjectId(String(productId)) },
+        { $set: updatedData }
+      );
+
+    console.log("Edit product route working >>>>>>>>");
+    res.redirect("/admin/products-list");
+  } catch (error) {
+    console.error("❌ Edit product error:", error);
+    res.status(500).send("Failed to edit product");
+  }
+};
+
+// delete product
+export const deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    console.log("Delete product route working >>>>>>>>", productId);
+
+    const db = await connectDB();
+
+    // 1️⃣ Get product first
+    const productData = await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .findOne({ _id: new ObjectId(productId) });
+
+    if (!productData) {
+      return res.status(404).send("Product not found");
     }
-  };
 
-  //  edit and update prooducts
-  export const editProductDetailsPage = async (req, res) => {
-    try {
-      const productId = req.params.id;
-      const db = await connectDB();
+    // 2️⃣ Delete thumbnail
+    deleteFile(productData.thumbnail);
 
-      const productDetailsEdit = await db
-        .collection(collection.PRODUCTS_COLLECTION)
-        .findOne({ _id: new ObjectId(String(productId)) });
-
-      res.render("admin/productDetailsEdit", {
-        layout: "admin",
-        title: "Edit Product Details",
-        productDetails: productDetailsEdit,
+    // 3️⃣ Delete product images
+    if (Array.isArray(productData.productImages)) {
+      productData.productImages.forEach((imgPath) => {
+        deleteFile(imgPath);
       });
-    } catch (error) {
-      console.error("❌ Edit product details error:", error);
-      res.status(500).send("Failed to edit product details");
     }
-  };
 
-  export const editProductDetails = async (req, res) => {
-    console.log(
-      "edit product function called >>>>>>>>>>",
-      req.params.id,
-      req.body
-    );
-    try {
-      const productId = req.params.id;
-      const data = req.body;
+    // 4️⃣ Delete product from DB
+    await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .deleteOne({ _id: new ObjectId(productId) });
 
-      // Map form fields to database fields
-      const updatedData = {
-        productName: data.title,
-        shortDescription: data.shortDescription,
-        description: data.description,
-        category: data.category,
-        brand: data.brand,
-        price: parseInt(data.price),
-        discountPrice: parseInt(data.discountPrice) || null,
-        stock: parseInt(data.stock),
-        rating: data.rating ? parseFloat(data.rating) : 0,
-        updatedAt: new Date(),
-      };
+    console.log("✅ Product + images deleted:", productId);
 
-      const db = await connectDB();
+    return res.redirect("/admin/products-list");
+  } catch (error) {
+    console.error("❌ Delete product error:", error);
+    res.status(500).send("Failed to delete product");
+  }
+};
 
-      await db
-        .collection(collection.PRODUCTS_COLLECTION)
-        .updateOne(
-          { _id: new ObjectId(String(productId)) },
-          { $set: updatedData }
-        );
-
-      console.log("Edit product route working >>>>>>>>");
-      res.redirect("/admin/products-list");
-    } catch (error) {
-      console.error("❌ Edit product error:", error);
-      res.status(500).send("Failed to edit product");
-    }
-  };
-
-  // delete product
-  export const deleteProduct = async (req, res) => {
-    try {
-      const productId = req.params.id;
-      console.log("Delete product route working >>>>>>>>", productId);
-
-      const db = await connectDB();
-
-      // 1️⃣ Get product first
-      const productData = await db
-        .collection(collection.PRODUCTS_COLLECTION)
-        .findOne({ _id: new ObjectId(productId) });
-
-      if (!productData) {
-        return res.status(404).send("Product not found");
-      }
-
-      // 2️⃣ Delete thumbnail
-      deleteFile(productData.thumbnail);
-
-      // 3️⃣ Delete product images
-      if (Array.isArray(productData.productImages)) {
-        productData.productImages.forEach((imgPath) => {
-          deleteFile(imgPath);
-        });
-      }
-
-      // 4️⃣ Delete product from DB
-      await db
-        .collection(collection.PRODUCTS_COLLECTION)
-        .deleteOne({ _id: new ObjectId(productId) });
-
-      console.log("✅ Product + images deleted:", productId);
-
-      return res.redirect("/admin/products-list");
-    } catch (error) {
-      console.error("❌ Delete product error:", error);
-      res.status(500).send("Failed to delete product");
-    }
-  };
-
-  
 export const getProductsData = async (options = {}) => {
   try {
     const db = await connectDB();
@@ -189,6 +199,7 @@ export const getProductsData = async (options = {}) => {
     if (options.brand) filter.brand = options.brand;
 
     let products;
+    // console.log("filter<>>>>",filter)
 
     // Random products
     if (options.sort === "random") {
@@ -196,7 +207,7 @@ export const getProductsData = async (options = {}) => {
         .collection(collection.PRODUCTS_COLLECTION)
         .aggregate([
           { $match: filter },
-          { $sample: { size: options.limit || 20 } }
+          { $sample: { size: options.limit || 20 } },
         ])
         .toArray();
     } else {
@@ -222,5 +233,3 @@ export const getProductsData = async (options = {}) => {
     throw error;
   }
 };
-
-

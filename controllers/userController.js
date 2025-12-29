@@ -6,49 +6,55 @@ import { getProductsData } from "./productController.js";
 import collection from "../config/collection.js";
 import { ObjectId } from "mongodb";
 
-
 export const landingPage = async (req, res) => {
   console.log("🚀 landingPage function called");
- try {
-  const user = req.user || null; 
+  try {
+    const user = req.user || null;
 
-    const [featuredProducts,latestMen, latestWomen, latestUnisex, newArrivals] =
-      await Promise.all([
-        getProductsData({ sort: "random", limit: 12 }),
-        getProductsData({ category: "latestMen", sort: "latest", limit: 10 }),
-        getProductsData({ category: "latestWomen", sort: "latest", limit: 10 }),
-        getProductsData({ category: "latestUnisex", sort: "latest", limit: 10 }),
-        getProductsData({ sort: "latest", limit: 15 }),
-      ]);
+    const [
+      featuredProducts,
+      latestMen,
+      latestWomen,
+      latestUnisex,
+      newArrivals,
+    ] = await Promise.all([
+      getProductsData({ sort: "random", limit: 12 }),
+      getProductsData({ category: "Men", sort: "latest", limit: 10 }),
+      getProductsData({ category: "Women", sort: "latest", limit: 10 }),
+      getProductsData({ category: "Unisex", sort: "latest", limit: 10 }),
+      getProductsData({ sort: "latest", limit: 15 }),
+    ]);
 
     const getStockStatus = ({ stock }) => {
-      if (stock > 20) return `🟢 Available (${stock})`;
-      if (stock > 0) return `🟠 Hurry up! Only ${stock} left`;
-      return `🔴 Currently unavailable`;
+      if (stock > 20) return `● Available (${stock})`;
+      if (stock > 0) return `◐ Hurry up! Only ${stock} left`;
+      return `○ Currently unavailable`;
     };
 
-  const withStockStatus = (products = []) =>
+    const withStockStatus = (products = []) =>
       products.map((product) => ({
         ...product,
         stockStatus: getStockStatus(product),
       }));
 
-  res.render("user/homePage", {
-    title: "Home - Lumina Skin",
+    // console.log("latestMen>>>>>", latestWomen);
+
+    res.render("user/homePage", {
+      title: "Home - Lumina Skin",
       featuredProducts: withStockStatus(featuredProducts),
       latestMen: withStockStatus(latestMen),
       latestWomen: withStockStatus(latestWomen),
       latestUnisex: withStockStatus(latestUnisex),
       newArrivals: withStockStatus(newArrivals),
-    bannerData: bannerData,
-    brandData: brandData,
-    user: user,
-  });
-} catch (error) {
-  console.error("❌ Landing page error FULL:", error);
-  console.error("❌ STACK:", error.stack);
-  res.status(500).send("Error loading home page");
-}
+      bannerData: bannerData,
+      brandData: brandData,
+      user: user,
+    });
+  } catch (error) {
+    console.error("❌ Landing page error FULL:", error);
+    console.error("❌ STACK:", error.stack);
+    res.status(500).send("Error loading home page");
+  }
 };
 
 export const LoginPage = async (req, res) => {

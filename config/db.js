@@ -1,17 +1,18 @@
-import { Db, MongoClient } from "mongodb";
+import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 const MONGODB_URI = process.env.MONGO_DB_URI;
-const DB_Name = process.env.DATABASE
+const DB_Name = process.env.DATABASE;
 
 let client;
 
-const connectToDatabase = async (databaseName) => {
+const connectDB = async () => {
   if (client) {
-    console.log("\nProcess ID:", process.pid, "- Using Cached Connection\n");
-    return client.db(databaseName);
+    console.log("\nProcess ID:", process.pid, "- Using Cached Connection");
+    console.log("📦 Connected Database:", DB_Name, "\n");
+    return client.db(DB_Name);
   }
 
   try {
@@ -27,13 +28,16 @@ const connectToDatabase = async (databaseName) => {
       maxPoolSize: 6,
     });
 
-    console.log("✅ Connection to MongoDB established successfully");
+    const db = client.db(DB_Name);
 
-    return client.db(DB_Name);
+    console.log("✅ MongoDB Connected Successfully");
+    console.log("📦 Connected Database:", db.databaseName);
+
+    return db;
   } catch (error) {
     console.error("❌ Failed to connect to MongoDB:", error);
     throw error;
   }
 };
 
-export default connectToDatabase;
+export default connectDB;

@@ -46,7 +46,7 @@
 
             <!-- Main Thumbnail -->
             <img
-              src="/userAssets/uploads/{{this.thumbnail}}"
+              src="{{this.thumbnail}}"
               alt="{{this.productName}}"
               class="w-100"
               style="height:220px; object-fit:cover;"
@@ -64,7 +64,7 @@
               <div class="position-absolute bottom-0 end-0 m-2 d-flex gap-1">
                 {{#each this.images}}
                   <img
-                    src="/userAssets/uploads/{{this}}"
+                    src="{{this}}"
                     class="rounded border"
                     style="height:38px;width:38px;object-fit:cover;background:#fff;"
                   />
@@ -109,6 +109,13 @@
             {{/if}}
 
           </div>
+
+          <!-- Rating -->
+                  <p style="margin: 0;">
+                    ⭐
+                    <span style="font-weight: 600;">{{this.rating}}</span>
+                    / 5
+                  </p>
 
           <!-- Actions -->
           <div class="px-3 pb-3 d-flex gap-2">
