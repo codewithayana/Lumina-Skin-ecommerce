@@ -473,43 +473,67 @@
   {{! Popular Brands }}
   <section class="popular-categories section-padding mt-15 mb-25">
     <div class="carausel-6-columns-cover position-relative">
-  <div
-    class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
-    id="carausel-6-columns-arrows"
-    style="right: 80px;"
-  ></div>
-
-  <!-- ADD STYLE HERE 👇 -->
-  <div
-    class="carausel-6-columns"
-    id="carausel-6-columns"
-    style="display:flex; gap:20px; overflow-x:auto; padding-bottom:10px;"
-  >
-    {{#each brandData}}
       <div
-        style="
-          width:280px;
-          height:180px;
-          border:5.5px solid #a8e1f0;
-          border-radius:20px;
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-          justify-content:center;
-          background:#fff;
-        "
-      >
-        <img
-          src="{{this.image}}"
-          alt="{{this.name}}"
-          style="max-width:200px; max-height:100px; object-fit:contain;"
-        />
-        
-      </div>
-    {{/each}}
-  </div>
-</div>
+        class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
+        id="carausel-6-columns-arrows"
+        style="right: 80px;"
+      ></div>
 
+      <!-- ADD STYLE HERE 👇 -->
+      <div
+        class="carausel-6-columns"
+        id="carausel-6-columns"
+        style="display:flex; gap:20px; overflow-x:auto; padding-bottom:10px;"
+      >
+        {{#each brandData}}
+          <div
+            style="
+      width:260px;
+      height:160px;
+      margin:10px;
+      border:2px solid #dff3f8;
+      border-radius:18px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      background:#ffffff;
+      box-shadow:0 8px 20px rgba(0,0,0,0.06);
+      transition:all 0.3s ease;
+      cursor:pointer;
+    "
+            onmouseover="this.style.boxShadow='0 12px 30px rgba(0,0,0,0.12)'; this.style.borderColor='#6fd3e3';"
+            onmouseout="this.style.boxShadow='0 8px 20px rgba(0,0,0,0.06)'; this.style.borderColor='#dff3f8';"
+          >
+            <img
+              src="{{this.image}}"
+              alt="{{this.name}}"
+              style="
+    max-width:200px;
+    max-height:90px;
+    object-fit:contain;
+    margin-bottom:10px;
+    transition:transform 0.3s ease;
+  "
+              onmouseover="this.style.transform='scale(1.05)'"
+              onmouseout="this.style.transform='scale(1)'"
+            />
+            <h5
+              style="
+    font-size:14px;
+    font-weight:600;
+    color:#444;
+    margin:0;
+    text-align:center;
+    letter-spacing:0.3px;
+  "
+            >
+              {{this.name}}
+            </h5>
+          </div>
+        {{/each}}
+      </div>
+    </div>
   </section>
 
   {{! <section class="section-padding">
@@ -921,11 +945,11 @@
         <div class="col-lg-6 deal-co">
           <div
             class="deal wow fadeIn animated mb-md-4 mb-sm-4 mb-lg-0"
-            style="background-image: url('/userAssets/imgs/banner/bnr1.jpg');"
+            style="background-image: url('/userAssets/imgs/banner/background 6.jpg');"
           >
             <div class="deal-top">
-              <h2 class="text-brand">Deal of the Day</h2>
-              <h5>Limited quantities.</h5>
+              <h2 class="text-brand">Glow Deal of the Day</h2>
+              <h5>Fresh skincare picks at special prices.</h5>
             </div>
             <div class="deal-content">
               <h6 class="product-title"><a href="shop-product-right.html">Summer
@@ -939,7 +963,7 @@
               <p>Hurry Up! Offer End In:</p>
               <div
                 class="deals-countdown"
-                data-countdown="2025/03/25 00:00:00"
+                data-countdown="2026/03/25 00:00:00"
               ></div>
               <a href="shop-grid-right.html" class="btn hover-up">Shop Now
                 <i class="fi-rs-arrow-right"></i></a>
@@ -949,15 +973,15 @@
         <div class="col-lg-6 deal-co">
           <div
             class="deal wow fadeIn animated"
-            style="background-image: url('/userAssets/imgs/banner/bnr8.jpg');"
+            style="background-image: url('/userAssets/imgs/banner/background 3.jpg');"
           >
             <div class="deal-top">
-              <h2 class="text-brand">Womens Collections</h2>
-              <h5>Perfumes</h5>
+              <h2 class="text-brand">Everyday Skincare Essentials</h2>
+              <h5>Gentle care for everyone.</h5>
             </div>
             <div class="deal-content">
-              <h6 class="product-title"><a href="shop-product-right.html">Try
-                  something new on vacation</a></h6>
+              <h6 class="product-title"><a href="shop-product-right.html">Simple
+                  routines. Visible results.</a></h6>
               <div class="product-price"><span
                   class="new-price"
                 >$178.00</span><span class="old-price">$256.99</span></div>
@@ -977,22 +1001,25 @@
     </div>
   </section>
   <section class="section-padding">
-   <div class="container">
-  <h3 class="section-title mb-20 wow fadeIn animated">
-    <span>Featured</span> Brands
-  </h3>
+    <div class="container">
+      <h3 class="section-title mb-20 wow fadeIn animated">
+        <span>Featured</span>
+        Brands
+      </h3>
 
-  <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
-    <div
-      class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
-      id="carausel-6-columns-3-arrows"
-    ></div>
-
-    <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
-      {{#each brandData}}
+      <div
+        class="carausel-6-columns-cover position-relative wow fadeIn animated"
+      >
         <div
-          class="brand-logo"
-          style="
+          class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
+          id="carausel-6-columns-3-arrows"
+        ></div>
+
+        <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
+          {{#each brandData}}
+            <div
+              class="brand-logo"
+              style="
             width: 120px;
             height: 80px;
             display: inline-flex;
@@ -1002,23 +1029,23 @@
             background: #fff;
             border-radius: 8px;
           "
-        >
-        
-          <img
-            src="{{this.image}}"
-            alt=""
-            style="
+            >
+
+              <img
+                src="{{this.image}}"
+                alt=""
+                style="
               max-width: 100%;
               max-height: 500%;
               object-fit: contain;
             "
-          />
-          
+              />
+
+            </div>
+          {{/each}}
         </div>
-      {{/each}}
+      </div>
     </div>
-  </div>
-</div>
 
   </section>
 
@@ -1037,7 +1064,15 @@
 
       <div class="row">
 
-        
+        <!-- Left Banner -->
+        <div class="col-lg-3 d-none d-lg-flex">
+          <div class="banner-img style-2 wow fadeIn animated">
+            <img
+              src="/userAssets/imgs/banner/left banner 1.jpg"
+              alt="Skincare Banner"
+            />
+          </div>
+        </div>
 
         <!-- Products -->
         <div class="col-lg-9 col-md-12">
@@ -1111,8 +1146,8 @@
                     </div>
 
                     <div class="product-price">
-                      <span>{{this.discountPrice}}</span>
-                      <span class="old-price">{{this.price}}</span>
+                      <span>₹{{this.discountPrice}}</span>
+                      <span class="old-price">₹{{this.price}}</span>
                     </div>
 
                     <div class="product-action-1 show">
