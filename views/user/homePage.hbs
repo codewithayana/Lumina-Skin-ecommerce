@@ -142,10 +142,10 @@
                       <a href="/productDetails?id={{this.productId}}">
                         <img
                           class="default-img"
-                          src="{{this.images.0}}"
+                          src="{{this.images.[0]}}"
                           alt=""
                         />
-                        <img class="hover-img" src="{{this.images.1}}" alt="" />
+                        <img class="hover-img" src="{{this.images.[1]}}" alt="" />
                       </a>
                     </div>
                     <div class="product-action-1">
@@ -259,10 +259,10 @@
                       <a href="shop-product-right.html">
                         <img
                           class="default-img"
-                          src="{{this.images.0}}"
+                          src="{{this.images.[0]}}"
                           alt=""
                         />
-                        <img class="hover-img" src="{{this.images.1}}" alt="" />
+                        <img class="hover-img" src="{{this.images.[1]}}" alt="" />
                       </a>
                     </div>
                     <div class="product-action-1">
@@ -345,23 +345,23 @@
                 <div class="product-cart-wrap mb-30">
                   <div class="product-img-action-wrap">
                     <div class="product-img product-img-zoom">
-                      <a href="{{this.images.0}}">
+                      <a href="{{this.images.[0]}}">
                         <img
                           class="default-img"
-                          src="{{this.images.0}}"
+                          src="{{this.images.[0]}}"
                           alt="{{this.productName}}"
                         />
 
-                        {{#if this.images.1}}
+                        {{#if this.images.[1]}}
                           <img
                             class="hover-img"
-                            src="{{this.images.1}}"
+                            src="{{this.images.[1]}}"
                             alt="{{this.productName}}"
                           />
                         {{else}}
                           <img
                             class="hover-img"
-                            src="{{this.images.0}}"
+                            src="{{this.images.[0]}}"
                             alt="{{this.productName}}"
                           />
                         {{/if}}
@@ -470,29 +470,46 @@
 
   </section>
 
+  {{! Popular Brands }}
   <section class="popular-categories section-padding mt-15 mb-25">
-    <div class="container wow fadeIn animated">
-      <h3 class="section-title mb-20"><span>Popular</span> Fragrance</h3>
-      <div class="carausel-6-columns-cover position-relative">
-        <div
-          class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
-          id="carausel-6-columns-arrows"
-        ></div>
-        <div class="carausel-6-columns" id="carausel-6-columns">
-          {{#each latestUnisex}}
-            <div class="card-1">
-              <figure class="img-hover-scale overflow-hidden">
-                <a href="shop-grid-right.html"><img
-                    src="{{this.image}}"
-                    alt="{{this.image}}"
-                  /></a>
-              </figure>
-              <h5><a href="shop-grid-right.html">{{this.name}}</a></h5>
-            </div>
-          {{/each}}
-        </div>
+    <div class="carausel-6-columns-cover position-relative">
+  <div
+    class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
+    id="carausel-6-columns-arrows"
+    style="right: 80px;"
+  ></div>
+
+  <!-- ADD STYLE HERE 👇 -->
+  <div
+    class="carausel-6-columns"
+    id="carausel-6-columns"
+    style="display:flex; gap:20px; overflow-x:auto; padding-bottom:10px;"
+  >
+    {{#each brandData}}
+      <div
+        style="
+          width:280px;
+          height:180px;
+          border:5.5px solid #a8e1f0;
+          border-radius:20px;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          background:#fff;
+        "
+      >
+        <img
+          src="{{this.image}}"
+          alt="{{this.name}}"
+          style="max-width:200px; max-height:100px; object-fit:contain;"
+        />
+        
       </div>
-    </div>
+    {{/each}}
+  </div>
+</div>
+
   </section>
 
   {{! <section class="section-padding">
@@ -960,25 +977,49 @@
     </div>
   </section>
   <section class="section-padding">
-    <div class="container">
-      <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span>
-        Brands</h3>
-      <div
-        class="carausel-6-columns-cover position-relative wow fadeIn animated"
-      >
+   <div class="container">
+  <h3 class="section-title mb-20 wow fadeIn animated">
+    <span>Featured</span> Brands
+  </h3>
+
+  <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
+    <div
+      class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
+      id="carausel-6-columns-3-arrows"
+    ></div>
+
+    <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
+      {{#each brandData}}
         <div
-          class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
-          id="carausel-6-columns-3-arrows"
-        ></div>
-        <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
-          {{#each brands}}
-            <div class="brand-logo">
-              <img class="img-grey-hover" src="{{this.image}}" alt="" />
-            </div>
-          {{/each}}
+          class="brand-logo"
+          style="
+            width: 120px;
+            height: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            background: #fff;
+            border-radius: 8px;
+          "
+        >
+        
+          <img
+            src="{{this.image}}"
+            alt=""
+            style="
+              max-width: 100%;
+              max-height: 500%;
+              object-fit: contain;
+            "
+          />
+          
         </div>
-      </div>
+      {{/each}}
     </div>
+  </div>
+</div>
+
   </section>
 
   <section class="bg-grey-9 section-padding">
@@ -996,24 +1037,7 @@
 
       <div class="row">
 
-        <!-- Left Banner -->
-        <div class="col-lg-3 d-none d-lg-flex">
-          <div class="banner-img style-2 wow fadeIn animated">
-            <img src="/userAssets/imgs/slider/bnr7.jpg" alt="Perfume Banner" />
-            <div class="banner-text">
-              <span>Exclusive Scents</span>
-              <h4 class="mt-5">
-                Save up to 20%
-                <br />
-                on New Perfumes
-              </h4>
-              <a href="/shop" class="text-white">
-                Shop Now
-                <i class="fi-rs-arrow-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
+        
 
         <!-- Products -->
         <div class="col-lg-9 col-md-12">
@@ -1039,13 +1063,13 @@
                       <a href="/product">
                         <img
                           class="default-img"
-                          src="{{this.images.0}}"
-                          alt="Perfume"
+                          src="{{this.images.[0]}}"
+                          alt="Skin Care"
                         />
                         <img
                           class="hover-img"
-                          src="{{this.images.1}}"
-                          alt="Perfume Hover"
+                          src="{{this.images.[1]}}"
+                          alt="Skin Care Hover"
                         />
                       </a>
                     </div>

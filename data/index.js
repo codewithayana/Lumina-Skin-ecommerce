@@ -54,7 +54,7 @@ export const bannerData = [
 export const brandData = [
   {
     name: "Aqualogica",
-    image: "/userAssets/imgs/Logos/aqualogica.png",
+    image: "/userAssets/imgs/banner/Aqcualogica.jpg",
     link: "/shop-grid-right.html",
   },
   {
@@ -64,12 +64,12 @@ export const brandData = [
   },
   {
     name: "Dr. Sheth's",
-    image: "/userAssets/imgs/Logos/la-roche-posay.png",
+    image: "/userAssets/imgs/banner/DrSheths .webp",
     link: "/shop-grid-right.html",
   },
   {
     name: "The Ordinary",
-    image: "/userAssets/imgs/banner/ordinary.avif",
+    image: "/userAssets/imgs/banner/the ordinery.jpg",
     link: "/shop-grid-right.html",
   },
   {
@@ -79,17 +79,17 @@ export const brandData = [
   },
   {
     name: "Minimalist",
-    image: "/userAssets/imgs/Logos/minimalist.png",
+    image: "/userAssets/imgs/banner/Minimalist.webp",
     link: "/shop-grid-right.html",
   },
   {
     name: "Mamaearth",
-    image: "/userAssets/imgs/banner/mamaearth-logo-png_seeklogo-487672.webp",
+    image: "/userAssets/imgs/banner/mamaearth.jpg",
     link: "/shop-grid-right.html",
   },
   {
     name: "Plum",
-    image: "/userAssets/imgs/banner/plum.avif",
+    image: "/userAssets/imgs/banner/plum.jpg",
     link: "/shop-grid-right.html",
   },
   {
@@ -99,7 +99,7 @@ export const brandData = [
   },
   {
     name: "Simple",
-    image: "/userAssets/imgs/Logos/simple.png",
+    image: "/userAssets/imgs/banner/Simple .avif",
     link: "/shop-grid-right.html",
   },
 ];
