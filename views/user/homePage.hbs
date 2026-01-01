@@ -449,10 +449,10 @@
     >
       <!-- Background Image -->
       <img
-        src="/userAssets/imgs/banner/skincare.jpg"
+        src="/userAssets/imgs/banner/skin care 1.png"
         alt="Lumina Skin Banner"
         class="w-100"
-        style="object-fit: cover; height: 300px; border-radius: 10px;"
+        style="object-fit: cover; height: 400px; border-radius: 10px;"
       />
 
       <!-- Banner Text Overlay -->
@@ -471,12 +471,14 @@
   </section>
 
   {{! Popular Brands }}
-  <section class="popular-categories section-padding mt-15 mb-25">
+  <section class="section-padding">
+    <div class="container">
+      <h3 class="section-title mb-20 wow fadeIn animated">
     <div class="carausel-6-columns-cover position-relative">
       <div
         class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
         id="carausel-6-columns-arrows"
-        style="right: 80px;"
+        style="right: 5px;"
       ></div>
 
       <!-- ADD STYLE HERE 👇 -->
@@ -497,7 +499,7 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      background:#ffffff;
+      background: #ffffff;
       box-shadow:0 8px 20px rgba(0,0,0,0.06);
       transition:all 0.3s ease;
       cursor:pointer;
@@ -509,7 +511,7 @@
               src="{{this.image}}"
               alt="{{this.name}}"
               style="
-    max-width:200px;
+    max-width:150px;
     max-height:90px;
     object-fit:contain;
     margin-bottom:10px;
@@ -1141,9 +1143,18 @@
                       <a href="/product">{{this.productName}}</a>
                     </h2>
 
-                    <div class="rating-result" title="90%">
-                      <span><span>90%</span></span>
-                    </div>
+          
+                    {{#if this.rating}}
+                      <div class="small text-warning fw-semibold mb-1">
+                        ★
+                        {{this.rating}}
+                        <span class="text-muted">/ 5</span>
+                      </div>
+                    {{else}}
+                      <div class="small text-muted mb-1">
+                        No rating yet
+                      </div>
+                    {{/if}}
 
                     <div class="product-price">
                       <span>₹{{this.discountPrice}}</span>

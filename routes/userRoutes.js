@@ -3,6 +3,9 @@ import {
   landingPage,
   LoginPage,
   signupPage,
+  cartPage,
+  addToCart,
+  clearCart,
 } from "../controllers/userController.js";
 import { adminLoginPage } from "../controllers/adminController.js";
 import { logIn, logoutUser, signUp } from "../controllers/userAuth.js";
@@ -20,5 +23,11 @@ userRoutes.post("/create-user", signUp);
 userRoutes.post("/login-user", logIn);
 
 userRoutes.get("/logout", logoutUser);
+
+userRoutes.get("/cart", cartPage );
+
+userRoutes.post("/add-to-cart", addToCart );
+
+userRoutes.get("/cart/clear", clearCart);
 
 export default userRoutes;
