@@ -96,11 +96,12 @@ export const editProductDetailsPage = async (req, res) => {
       .collection(collection.PRODUCTS_COLLECTION)
       .findOne({ _id: new ObjectId(String(productId)) });
 
-    res.render("admin/productDetailsEdit", {
-      layout: "admin",
-      title: "Edit Product Details",
-      productDetails: productDetailsEdit,
-    });
+    res.render("admin/product-edit", {
+  layout: "admin",
+  title: "Edit Product Details",
+  productDetails: productDetailsEdit,
+});
+
   } catch (error) {
     console.error("❌ Edit product details error:", error);
     res.status(500).send("Failed to edit product details");

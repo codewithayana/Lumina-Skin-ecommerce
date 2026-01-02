@@ -6,6 +6,8 @@ import {
   adminProductsListPage,
   adminOrdersListPage,
   adminProductEditPage,
+  usersListPage,
+  blockUnblockUser,
 } from "../controllers/adminController.js";
 
 import { adminLogin } from "../controllers/adminAuth.js";
@@ -50,5 +52,10 @@ adminRoutes.get("/products/delete/:id", deleteProduct);
 
 /* ---------------- ORDERS ---------------- */
 adminRoutes.get("/orders-list", adminOrdersListPage);
+
+
+/* ================= USERS ================= */
+adminRoutes.get("/users-list", usersListPage);
+adminRoutes.post("/block-user/:id", blockUnblockUser);
 
 export default adminRoutes;

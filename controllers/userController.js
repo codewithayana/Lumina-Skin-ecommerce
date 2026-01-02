@@ -5,6 +5,7 @@ import { brandData } from "../data/index.js";
 import { getProductsData } from "./productController.js";
 import collection from "../config/collection.js";
 import { ObjectId } from "mongodb";
+import { v7 as uuidv7 } from "uuid";
 
 export const landingPage = async (req, res) => {
   console.log("🚀 landingPage function called");
@@ -398,7 +399,105 @@ export const placeOrder = async (req, res) => {
 
     res.redirect("/order-success");
   } catch (error) {
-    // console.error("🔥 Error placing order:", error);
+    console.error("🔥 Error placing order:", error);
     res.status(500).send("Something went wrong while placing the order.");
   }
 };
+
+export const orderSuccess = async (req, res) => {
+
+  try {
+    const userId = req.loggedInUser?.id;
+    if (!userId) return res.redirect("/login");
+
+    const db = await connectDB();
+
+    // Fetch the last order for this user
+    const lastOrder = await db
+      .collection(collection.ORDERS_COLLECTION)
+      .findOne({ userId }, { sort: { createdAt: -1 } });
+
+    if (!lastOrder) {
+      // console.log("No order found for this user.");
+      return res.redirect("/");
+    }
+
+    // Ensure each cart item has a total
+    const cartWithTotal = lastOrder.userCart.map((item) => ({
+      ...item,
+      total: item.total || item.price * item.quantity,
+    }));
+
+    // Calculate total order amount
+    const totalAmount = cartWithTotal.reduce(
+      (acc, item) => acc + item.total,
+      0
+    );
+
+    res.render("user/orderSuccess", {
+      orderId: lastOrder._id,
+      email: req.loggedInUser.email,
+      billingName: lastOrder.address.billingName,
+      address: lastOrder.address.address,
+      landmark: lastOrder.address.landmark,
+      phone: lastOrder.address.phone,
+      userCart: cartWithTotal,
+      total: totalAmount,
+    });
+  } catch (error) {
+    // console.error("Error rendering order success page:", error);
+    res
+      .status(500)
+      .send("Something went wrong while loading the order success page.");
+  }
+};
+
+export const getOrderHistory = async (req, res) => {
+
+  try {
+    const userId = req.loggedInUser?.id;
+    if (!userId) return res.redirect("/login");
+
+    // Connect to database
+    const db = await connectDB();
+
+    // Fetch all orders for this user, newest first
+    const orders = await db
+      .collection(collection.ORDERS_COLLECTION)
+      .find({ userId })
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    if (!orders || orders.length === 0) {
+      // console.log("No orders found for this user.");
+      return res.render("user/order-history", { orders: [] });
+    }
+
+    // Format orders: add cart totals and full totalAmount per order
+    const formattedOrders = orders.map((order) => {
+      const cartWithTotal = order.userCart.map((item) => ({
+        ...item,
+        total: item.total || item.price * item.quantity,
+      }));
+
+      const totalAmount = cartWithTotal.reduce(
+        (acc, item) => acc + item.total,
+        0
+      );
+
+      return {
+        ...order,
+        userCart: cartWithTotal,
+        totalAmount,
+      };
+    });
+
+    // ✅ Render the correct view inside "views/user/order-history.hbs"
+    res.render("user/order-history", { orders: formattedOrders });
+  } catch (error) {
+    // console.error("Error loading order history page:", error);
+    res.status(500).send("Something went wrong while loading order history.");
+  }
+};
+
+

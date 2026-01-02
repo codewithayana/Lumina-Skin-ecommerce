@@ -10,6 +10,8 @@ import {
   checkoutPage,
   createAddress,
   placeOrder,
+  orderSuccess,
+  getOrderHistory,
 } from "../controllers/userController.js";
 import { adminLoginPage } from "../controllers/adminController.js";
 import { logIn, logoutUser, signUp } from "../controllers/userAuth.js";
@@ -42,5 +44,9 @@ userRoutes.get("/checkout", checkoutPage);
 userRoutes.post("/create-address", createAddress);
 
 userRoutes.post("/place-order", placeOrder);
+
+userRoutes.get("/order-success", orderSuccess);
+
+userRoutes.get("/order-history",  getOrderHistory);
 
 export default userRoutes;
