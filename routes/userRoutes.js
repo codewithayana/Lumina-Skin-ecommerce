@@ -6,6 +6,10 @@ import {
   cartPage,
   addToCart,
   clearCart,
+  removeFromCart,
+  checkoutPage,
+  createAddress,
+  placeOrder,
 } from "../controllers/userController.js";
 import { adminLoginPage } from "../controllers/adminController.js";
 import { logIn, logoutUser, signUp } from "../controllers/userAuth.js";
@@ -29,5 +33,14 @@ userRoutes.get("/cart", cartPage );
 userRoutes.post("/add-to-cart", addToCart );
 
 userRoutes.get("/cart/clear", clearCart);
+
+userRoutes.get("/cart/remove/:productId", removeFromCart);
+
+
+userRoutes.get("/checkout", checkoutPage);
+
+userRoutes.post("/create-address", createAddress);
+
+userRoutes.post("/place-order", placeOrder);
 
 export default userRoutes;

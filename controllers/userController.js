@@ -201,3 +201,204 @@ export const clearCart = async (req, res) => {
     res.status(500).send("Something went wrong while clearing the cart");
   }
 };
+
+export const removeFromCart = async (req, res) => {
+  try {
+    const userId = req.loggedInUser?.id;
+    const { productId } = req.params;
+
+    if (!userId) {
+      return res.redirect("/login");
+    }
+
+    const db = await connectDB();
+
+    // Remove the item from the cart array
+    await db
+      .collection(collection.USERS_COLLECTION)
+      .updateOne({ userId }, { $pull: { cart: { productId: productId } } });
+
+    res.redirect("/cart"); // Redirect back to landing page
+  } catch (error) {
+    // console.log("Error removing item from cart:", error);
+    res.status(500).send("Something went wrong");
+  }
+};
+
+export const checkoutPage = async (req, res) => {
+  console.log(">>>>called checkout function");
+  try {
+    const userId = req.loggedInUser?.id;
+    if (!userId) {
+      return res.redirect("/login");
+    }
+
+    const db = await connectDB();
+    const user = await db
+      .collection(collection.USERS_COLLECTION)
+      .findOne({ userId });
+
+    const userCart = user.cart || [];
+    const addresses = user.addresses || []; // ✅ Get saved addresses
+
+    // Calculate total
+    const total = userCart.reduce((acc, item) => acc + item.total, 0);
+
+    res.render("user/checkoutPage", {
+      title: "Checkout",
+      userCart,
+      total,
+      addresses, // ✅ Pass to HBS
+    });
+  } catch (error) {
+    // console.error(error);
+    res.send("Something went wrong");
+  }
+};
+
+export const createAddress = async (req, res) => {
+  try {
+    const userId = req.loggedInUser?.id;
+
+    if (!userId) {
+      return res.redirect("/login");
+    }
+
+    const { billingName, address, landmark, phone } = req.body;
+
+    if (!billingName || !address || !phone) {
+      // console.log("❌ Required fields missing");
+      return res.status(400).send("All required fields must be filled");
+    }
+
+    const db = await connectDB();
+    // console.log("✅ Database connected");
+
+    // ✅ IMPORTANT: Match using userId instead of _id
+    const result = await db.collection(collection.USERS_COLLECTION).updateOne(
+      { userId: userId },
+      {
+        $push: {
+          addresses: {
+            billingName,
+            address,
+            landmark: landmark || "",
+            phone,
+            createdAt: new Date(),
+          },
+        },
+      }
+    );
+
+    // console.log("Update Result:", {
+    //   matched: result.matchedCount,
+    //   modified: result.modifiedCount,
+    // });
+
+    if (result.modifiedCount === 0) {
+      // console.log("⚠️ Address not added. Possible wrong userId match.");
+      return res.status(500).send("Failed to add address");
+    }
+
+    // console.log("✅ Address added successfully. Redirecting...");
+    res.redirect("/user/checkoutPage");
+  } catch (error) {
+    // console.error("🔥 Error creating address:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const placeOrder = async (req, res) => {
+  // console.log("req.body consoled...>>>>>>",req.body)
+  try {
+    const userId = req.loggedInUser?.id;
+    if (!userId) return res.redirect("/login");
+
+    const db = await connectDB();
+
+    const user = await db
+      .collection(collection.USERS_COLLECTION)
+      .findOne({ userId });
+
+    if (!user) return res.status(404).send("User not found");
+
+    const userCart = user.cart || [];
+    if (userCart.length === 0) return res.redirect("/cart");
+
+    // Handle address
+    let orderAddress;
+    if (user.addresses?.length && req.body.selectedAddress !== undefined) {
+      const index = parseInt(req.body.selectedAddress);
+      orderAddress = user.addresses[index];
+    } else if (req.body.billingName && req.body.address && req.body.phone) {
+      orderAddress = {
+        billingName: req.body.billingName,
+        address: req.body.address,
+        landmark: req.body.landmark || "",
+        phone: req.body.phone,
+        createdAt: new Date(),
+      };
+      await db
+        .collection(collection.USERS_COLLECTION)
+        .updateOne({ userId }, { $push: { addresses: orderAddress } });
+    } else {
+      return res.status(400).send("Address details missing");
+    }
+
+    // ----- STOCK CHECK -----
+    for (let item of userCart) {
+      const product = await db
+        .collection(collection.PRODUCTS_COLLECTION)
+        .findOne({ productId: item.productId });
+
+      console.log("???????? Product", product);
+
+      if (!product) {
+        return res
+          .status(404)
+          .send(`Product ${item.title} not found in database`);
+      }
+
+      if (product.stock === undefined || product.stock < item.quantity) {
+        return res
+          .status(400)
+          .send(`Not enough stock for product: ${item.name}`);
+      }
+    }
+
+    // ----- DEDUCT STOCK -----
+    for (let item of userCart) {
+      await db.collection(collection.PRODUCTS_COLLECTION).updateOne(
+        { _id: new ObjectId(item._id) },
+        { $inc: { stock: -item.quantity } } // decrement stock
+      );
+    }
+
+    // ----- CREATE ORDER -----
+    const order = {
+      orderId: uuidv7(),
+      userId,
+      userCart,
+      address: orderAddress,
+      paymentMethod: req.body.payment_option,
+      total: userCart.reduce((acc, item) => acc + item.total, 0),
+      status: req.body.payment_option === "COD" ? "Pending" : "Paid",
+      createdAt: new Date(),
+    };
+
+    const result = await db
+      .collection(collection.ORDERS_COLLECTION)
+      .insertOne(order);
+    const orderId = result.insertedId;
+
+    await db.collection(collection.USERS_COLLECTION).updateOne(
+      { userId },
+      { $push: { orders: orderId }, $set: { cart: [] } } // add order and clear cart
+    );
+
+    res.redirect("/order-success");
+  } catch (error) {
+    // console.error("🔥 Error placing order:", error);
+    res.status(500).send("Something went wrong while placing the order.");
+  }
+};
