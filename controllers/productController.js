@@ -20,12 +20,10 @@ export const createProduct = async (req, res) => {
     const data = req.body;
 
     const categoryMap = {
-  Men: "Men",
-  Women: "Women",
-  Unisex: "Unisex",
-};
-
-
+      Men: "Men",
+      Women: "Women",
+      Unisex: "Unisex",
+    };
 
     // Thumbnail (single)
     const thumbnail = req.files?.thumbnail?.[0]?.filename || null;
@@ -35,7 +33,6 @@ export const createProduct = async (req, res) => {
       req.files?.productImages?.map(
         (file) => `/userAssets/uploads/${file.filename}`
       ) || [];
-
 
     const productData = {
       productId: uuidv7(),
@@ -49,7 +46,7 @@ export const createProduct = async (req, res) => {
       stock: Number(data.stock),
       rating: Number(data.rating),
       thumbnail: `/userAssets/uploads/${thumbnail}`,
-      images: productImages, 
+      images: productImages,
       picturePath: "pictures",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -72,7 +69,6 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async () => {
   try {
-
     const db = await connectDB();
     const products = await db
       .collection(collection.PRODUCTS_COLLECTION)
@@ -88,6 +84,7 @@ export const getAllProducts = async () => {
 
 //  edit and update prooducts
 export const editProductDetailsPage = async (req, res) => {
+  console.log("edit product details page function called >>>>>>>>>>");
   try {
     const productId = req.params.id;
     const db = await connectDB();
@@ -97,57 +94,60 @@ export const editProductDetailsPage = async (req, res) => {
       .findOne({ _id: new ObjectId(String(productId)) });
 
     res.render("admin/product-edit", {
-  layout: "admin",
-  title: "Edit Product Details",
-  productDetails: productDetailsEdit,
-});
-
+      layout: "admin",
+      title: "Edit Product Details",
+      productDetails: productDetailsEdit,
+    });
   } catch (error) {
     console.error("❌ Edit product details error:", error);
     res.status(500).send("Failed to edit product details");
   }
 };
 
-export const editProductDetails = async (req, res) => {
-  console.log(
-    "edit product function called >>>>>>>>>>",
-    req.params.id,
-    req.body
-  );
+export const editProduct = async (req, res) => {
+  console.log("edit product function called >>>>>>");
+  console.log("Body:", req.body);
   try {
-    const productId = req.params.id;
-    const data = req.body;
+    const {
+      productName,
+      brand,
+      category,
+      fragranceType,
+      volume,
+      shortDescription,
+      fullDescription,
+      regularPrice,
+      discountPrice,
+      stock,
+      rating,
+    } = req.body;
 
-    // Map form fields to database fields
-    const updatedData = {
-      productName: data.title,
-      shortDescription: data.shortDescription,
-      description: data.description,
-      category: data.category,
-      brand: data.brand,
-      price: parseInt(data.price),
-      discountPrice: parseInt(data.discountPrice) || null,
-      stock: parseInt(data.stock),
-      rating: data.rating ? parseFloat(data.rating) : 0,
+    const editedProduct = {
+      productName,
+      brand,
+      category,
+      fragranceType,
+      volume,
+      shortDescription,
+      fullDescription,
+      price: parseInt(regularPrice),
+      discountPrice: parseInt(discountPrice),
+      stock: parseInt(stock),
+      rating: parseInt(rating),
       updatedAt: new Date(),
     };
-
     const db = await connectDB();
-
-    await db
+    const result = await db
       .collection(collection.PRODUCTS_COLLECTION)
-      .updateOne(
-        { _id: new ObjectId(String(productId)) },
-        { $set: updatedData }
-      );
+      .updateOne({ _id: new ObjectId(req.params.id) }, { $set: editedProduct });
 
-    console.log("Edit product route working >>>>>>>>");
     res.redirect("/admin/products-list");
   } catch (error) {
-    console.error("❌ Edit product error:", error);
-    res.status(500).send("Failed to edit product");
+    console.log(error);
+    res.status(500).send("Failed to edit the product.");
   }
 };
+
 
 // delete product
 export const deleteProduct = async (req, res) => {

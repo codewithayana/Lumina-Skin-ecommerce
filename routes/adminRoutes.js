@@ -8,6 +8,8 @@ import {
   adminProductEditPage,
   usersListPage,
   blockUnblockUser,
+  updateOrderStatus,
+  adminOrderDetailsPage,
 } from "../controllers/adminController.js";
 
 import { adminLogin } from "../controllers/adminAuth.js";
@@ -15,7 +17,7 @@ import { adminLogin } from "../controllers/adminAuth.js";
 import {
   createProduct,
   deleteProduct,
-  editProductDetailsPage,
+  editProduct,
 } from "../controllers/productController.js";
 
 import { uploadFiles } from "../middleware/uploadMiddleware.js";
@@ -35,7 +37,8 @@ adminRoutes.get("/products-list", adminProductsListPage);
 
 /* Edit product pages */
 adminRoutes.get("/products/edit/:id", adminProductEditPage);
-adminRoutes.post("/products/edit/:id", editProductDetailsPage);
+
+adminRoutes.post("/products/edit/:id", editProduct);
 
 /* Create product */
 adminRoutes.post(
@@ -52,7 +55,8 @@ adminRoutes.get("/products/delete/:id", deleteProduct);
 
 /* ---------------- ORDERS ---------------- */
 adminRoutes.get("/orders-list", adminOrdersListPage);
-
+adminRoutes.get("/orders/:id", adminOrderDetailsPage);
+adminRoutes.get("/order-status/:id/:status", updateOrderStatus);
 
 /* ================= USERS ================= */
 adminRoutes.get("/users-list", usersListPage);

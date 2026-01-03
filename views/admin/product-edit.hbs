@@ -1,6 +1,5 @@
 <section class="content-main">
-  <form action="/admin/products/edit/{{product._id}}" method="POST">
-
+  <form action="/admin/product/edit/{{product._id}}" method="POST">
 
     <div class="row">
       <!-- Header -->
@@ -8,11 +7,11 @@
         <div class="content-header">
           <h2 class="content-title">Edit Product</h2>
           <button type="submit" class="btn btn-md rounded font-sm hover-up">
-            Save
+            Update Product
           </button>
         </div>
       </div>
-  
+
       <!-- Main Form -->
       <div class="col-lg-6">
         <div class="card mb-4">
@@ -35,37 +34,29 @@
             </div>
 
             <!-- Brand & Category -->
-            <div class="row">
-              <div class="col-lg-4">
-                <div class="mb-4">
-                  <label for="brand" class="form-label">Brand</label>
-                  <select name="brand" id="brand" class="form-control">
-                    <option value="">Select brand</option>
-                    <option value="Plum">Plum</option>
-                    <option value="Mamaearth"> Mamaearth</option>
-                    <option value="Aqualogica">Aqualogica</option>
-                    <option value="Dot & Key">Dot & Key</option>
-                    <option value="Simple">Simple</option>
-                    <option value="Neutrogena">Neutrogena</option>
-                    <option value="CeraVe">CeraVe</option>
-                    <option value="The Ordinary">The Ordinary</option>
-                    <option value="Minimalist">Minimalist</option>
-                    <option value="Dr. Sheth's">Dr. Sheth's</option>
-                  </select>
-                </div>
+            <div class="row gx-2">
+              <div class="col-lg-6 mb-3">
+                <label class="form-label">Brand Name</label>
+                <select class="form-select" name="brand" required>
+                  <option value="">Select brand</option>
+                  {{#each brands}}
+                    <option value="{{this}}" {{#ifEquals this ../product.brand}}selected{{/ifEquals}}>
+                      {{this}}
+                    </option>
+                  {{/each}}
+                </select>
               </div>
-              <div class="col-lg-4">
-                <div class="mb-4">
-                  <label for="category" class="form-label">Category</label>
-                  <select name="category" id="category" class="form-control">
-                    <option value="">Select category</option>
-                    <option value="men" {{#ifEquals product.category "men"}}selected{{/ifEquals}}>Men</option>
-                    <option value="women" {{#ifEquals product.category "women"}}selected{{/ifEquals}}>Women</option>
-                    <option value="Unisex" {{#ifEquals product.category "Unisex"}}selected{{/ifEquals}}>Unisex</option>
-                  </select>
-                </div>
+
+              <div class="col-lg-6 mb-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="category" required>
+                  <option value="">Select category</option>
+                  <option value="Men" {{#ifEquals product.category "Men"}}selected{{/ifEquals}}>Men</option>
+                  <option value="Women" {{#ifEquals product.category "Women"}}selected{{/ifEquals}}>Women</option>
+                  <option value="Unisex" {{#ifEquals product.category "Unisex"}}selected{{/ifEquals}}>Unisex</option>
+                </select>
               </div>
-              
+            </div>
 
             <!-- Descriptions -->
             <div class="mb-4">

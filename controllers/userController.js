@@ -302,7 +302,7 @@ export const createAddress = async (req, res) => {
     }
 
     // console.log("✅ Address added successfully. Redirecting...");
-    res.redirect("/user/checkoutPage");
+    res.redirect("/checkoutPage");
   } catch (error) {
     // console.error("🔥 Error creating address:", error);
     res.status(500).send("Internal Server Error");

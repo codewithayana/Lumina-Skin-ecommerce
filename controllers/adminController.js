@@ -1,9 +1,9 @@
 import { getAllProducts } from "./productController.js";
 
-import connectToDatabase from "../config/db.js";
 import collection from "../config/collection.js";
 import { deleteProduct } from "./productController.js";
 import { ObjectId } from "mongodb";
+import connectDB from "../config/db.js";
 
 export const adminLoginPage = async (req, res) => {
   res.render("admin/adminLogin", { layout: "admin", title: "Admin Login" });
@@ -52,16 +52,17 @@ export const adminProductsListPage = async (req, res) => {
 };
 
 export const adminProductEditPage = async (req, res) => {
-  console.log("delete prodcuct page render>>>>>>>>>>>>>>>>>");
+  console.log("adminProductEditPage page function called >>>>>>>>>>");
   try {
     const productId = req.params.id;
     // console.log(productId);
-    const db = await connectToDatabase(process.env.DATABASE);
+    const db = await connectDB();
+
     const productArray = await db
       .collection(collection.PRODUCTS_COLLECTION)
       .find({ _id: new ObjectId(String(productId)) })
       .toArray();
-    // console.log("product Data >>>>>>", product);
+
     const [product] = productArray;
     res.render("admin/product-edit", {
       layout: "admin",
@@ -69,24 +70,23 @@ export const adminProductEditPage = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log("EDIT BODY:", req.body);
+    // console.log("EDIT BODY:", req.body);
 
     console.error("❌ Error fetching products:", error);
     res.status(500).send("Internal Server Error");
   }
 };
 
-
 /*** */
 export const updateOrderStatus = async (req, res) => {
   try {
-    const db = await connectToDatabase(process.env.DATABASE);
+    const db = await connectDB();
     const ordersCollection = db.collection(collection.ORDERS_COLLECTION);
 
     const orderId = req.params.id;
     const newStatus = req.params.status;
 
-    console.log("🆕 Updating order:", orderId, "➡️", newStatus);
+    // console.log("🆕 Updating order:", orderId, "➡️", newStatus);
 
     // Update order status
     await ordersCollection.updateOne(
@@ -104,7 +104,7 @@ export const updateOrderStatus = async (req, res) => {
 
 export const adminOrdersListPage = async (req, res) => {
   try {
-    const db = await connectToDatabase(process.env.DATABASE);
+    const db = await connectDB();
 
     const ordersCollection = db.collection(collection.ORDERS_COLLECTION);
     const usersCollection = db.collection(collection.USERS_COLLECTION);
@@ -116,7 +116,7 @@ export const adminOrdersListPage = async (req, res) => {
 
     const ordersWithTotals = await Promise.all(
       orders.map(async (order) => {
-        const cartItems = Array.isArray(order.cart) ? order.cart : [];
+        const cartItems = Array.isArray(order.userCart) ? order.userCart : [];
 
         const cartWithTotal = cartItems.map((item) => ({
           ...item,
@@ -144,6 +144,7 @@ export const adminOrdersListPage = async (req, res) => {
         };
       })
     );
+    // console.log("orders with totals>>>>>>",ordersWithTotals)
 
     res.render("admin/orders-list", {
       layout: "admin",
@@ -155,6 +156,66 @@ export const adminOrdersListPage = async (req, res) => {
     res
       .status(500)
       .send("Something went wrong while loading orders for admin.");
+  }
+};
+
+export const adminOrderDetailsPage = async (req, res) => {
+  // console.log("Admin Order Details route working 🚀");
+  try {
+    const db = await connectDB();
+
+    const orderId = req.params.id;
+    const ordersCollection = db.collection(collection.ORDERS_COLLECTION);
+    const productsCollection = db.collection(collection.PRODUCTS_COLLECTION); // ✅ corrected key
+
+    // Fetch the order by ID
+    const order = await ordersCollection.findOne({
+      _id: new ObjectId(orderId),
+    });
+    // console.log("???????? order", order)
+
+    if (!order) return res.status(404).send("Order not found");
+
+    // Attach product details for each cart item
+    const cartWithProductDetails = await Promise.all(
+      order.userCart.map(async (item) => {
+        const product = await productsCollection.findOne({
+          productId: item.productId,
+        });
+
+        //  console.log("console inside loop>>>> ", product);
+
+        return {
+          ...item,
+          productName: product?.productName,
+          brand: product?.brand,
+          stock: product?.stock,
+          stockStatus: product.stock > 0,
+          image: product.thumbnail,
+        };
+      })
+    );
+    // console.log("???????? Product", cartWithProductDetails)
+
+    // Calculate total amount
+    const totalAmount = cartWithProductDetails.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+
+    console.log("cart with product Details>>>>>", cartWithProductDetails);
+
+    // Render the order details page
+    res.render("admin/order-details", {
+      layout: "admin",
+      title: `Order Details - ${order._id}`,
+      order,
+      UserCart: cartWithProductDetails,
+      totalAmount,
+    });
+  } catch (error) {
+    console.error("Error loading admin order details:", error);
+    res.status(500).send("Something went wrong loading order details.");
   }
 };
 
