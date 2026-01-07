@@ -12,6 +12,7 @@ import {
   placeOrder,
   orderSuccess,
   getOrderHistory,
+  getWishlistPage,
 } from "../controllers/userController.js";
 import { adminLoginPage } from "../controllers/adminController.js";
 import { logIn, logoutUser, signUp } from "../controllers/userAuth.js";
@@ -48,5 +49,7 @@ userRoutes.post("/place-order", placeOrder);
 userRoutes.get("/order-success", orderSuccess);
 
 userRoutes.get("/order-history",  getOrderHistory);
+
+userRoutes.get("/wishlist",  getWishlistPage);
 
 export default userRoutes;

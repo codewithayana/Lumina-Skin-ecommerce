@@ -498,4 +498,63 @@ export const getOrderHistory = async (req, res) => {
   }
 };
 
+export const getWishlistPage = async (req, res) => {
+  // console.log(">>>>>>wishlist page function called");
+
+  try {
+    const userId = req.loggedInUser?.id;
+    console.log(">>>>>userId", userId);
+
+    if (!userId) return res.redirect("/login");
+
+    const db = await connectDB();
+
+    const user = await db
+      .collection(collection.USERS_COLLECTION)
+      .findOne({ userId });
+
+    const wishlistItems = user?.wishlist || [];
+
+    if (!wishlistItems.length)
+      return res.render("user/wishlist", { wishlist: [] });
+
+    // Extract productId as strings (UUIDs, not ObjectIds)
+    const productId = wishlistItems.map((item) => item.productId);
+
+    // Query using string UUIDs instead of ObjectIds
+    const products = await db
+      .collection(collection.PRODUCTS_COLLECTION)
+      .find({ productId: { $in: productId } })
+      .toArray();
+
+    const wishlist = wishlistItems
+      .map((item) => {
+        const product = products.find(
+          (p) => p.productId === item.productId // Compare as strings
+        );
+        if (!product) {
+          console.log("⚠ Book deleted from DB:", item.productId);
+          return null;
+        }
+
+        return {
+          productId: item.productId,
+          productName: product.productName,
+          brand: product.brand,
+          price: product.discountPrice || product.price,
+          image: product.thumbnail,
+          shortDescription: product.shortDescription || "",
+          stockStatus: product.stockStatus> 0,       
+        };
+      })
+      .filter(Boolean);
+
+    res.render("user/wishlist", { title: "Your Wishlist", wishlist });
+
+  } catch (err) {
+    console.error("❌ Wishlist Page Error:", err);
+    res.redirect("/");
+  }
+};
+
 
