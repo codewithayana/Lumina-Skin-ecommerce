@@ -61,7 +61,7 @@ export const landingPage = async (req, res) => {
 export const LoginPage = async (req, res) => {
   console.log("🚀 LoginPage function called");
   try {
-    res.render("user/loginPage", {
+    res.render("user/loginpage", {
       title: "Login - Lumina Skin",
     });
   } catch (error) {
