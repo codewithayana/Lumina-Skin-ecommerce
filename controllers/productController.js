@@ -12,9 +12,9 @@ const deleteFile = (filePath) => {
 };
 
 export const createProduct = async (req, res) => {
-  console.log("create product route working >>>>>>>>");
-  console.log("Body:", req.body);
-  console.log("Files:", req.files);
+  // console.log("create product route working >>>>>>>>");
+  // console.log("Body:", req.body);
+  // console.log("Files:", req.files);
 
   try {
     const data = req.body;
@@ -57,7 +57,7 @@ export const createProduct = async (req, res) => {
       .collection(collection.PRODUCTS_COLLECTION)
       .insertOne(productData);
 
-    console.log("✅ New product added:", result.insertedId);
+    // console.log("✅ New product added:", result.insertedId);
 
     return res.redirect("/admin/add-product");
     // or: res.redirect("/admin/products-list");
@@ -84,7 +84,7 @@ export const getAllProducts = async () => {
 
 //  edit and update prooducts
 export const editProductDetailsPage = async (req, res) => {
-  console.log("edit product details page function called >>>>>>>>>>");
+  // console.log("edit product details page function called >>>>>>>>>>");
   try {
     const productId = req.params.id;
     const db = await connectDB();
@@ -105,8 +105,8 @@ export const editProductDetailsPage = async (req, res) => {
 };
 
 export const editProduct = async (req, res) => {
-  console.log("edit product function called >>>>>>");
-  console.log("Body:", req.body);
+  // console.log("edit product function called >>>>>>");
+  // console.log("Body:", req.body);
   try {
     const {
       productName,
@@ -148,7 +148,7 @@ export const editProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    console.log("Delete product route working >>>>>>>>", productId);
+    // console.log("Delete product route working >>>>>>>>", productId);
 
     const db = await connectDB();
 

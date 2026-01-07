@@ -1,9 +1,9 @@
 import { getAllProducts } from "./productController.js";
-
-import collection from "../config/collection.js";
 import { deleteProduct } from "./productController.js";
+import { getCurrentYearSalesByCategory } from "./chartController.js";
 import { ObjectId } from "mongodb";
 import connectDB from "../config/db.js";
+import collection from "../config/collection.js";
 
 export const adminLoginPage = async (req, res) => {
   res.render("admin/adminLogin", { layout: "admin", title: "Admin Login" });
@@ -11,10 +11,132 @@ export const adminLoginPage = async (req, res) => {
 
 export const adminDashboardPage = async (req, res) => {
   try {
+    const db = await connectDB();
+
+    // Get current date info
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0-11
+
+    // Start of current year
+    const startOfYear = new Date(currentYear, 0, 1);
+
+    // Start and end of current month
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+
+    const ordersCollection = db.collection(collection.ORDERS_COLLECTION);
+    const usersCollection = db.collection(collection.USERS_COLLECTION);
+
+    // 1. Delivered Orders THIS YEAR
+    const deliveredOrdersThisYear = await ordersCollection.countDocuments({
+      status: "Delivered",
+      createdAt: { $gte: startOfYear },
+    });
+
+    console.log(">>>>>>deliveredOrdersThisYear",deliveredOrdersThisYear)
+
+    // 2. Products Sold THIS YEAR (sum of all quantities in delivered orders)
+    const productsSoldPipeline = [
+      {
+        $match: {
+          status: "Delivered",
+          createdAt: { $gte: startOfYear },
+        },
+      },
+      { $unwind: "$userCart" },
+      {
+        $group: {
+          _id: null,
+          totalQuantity: { $sum: "$userCart.quantity" },
+        },
+      },
+    ];
+
+    const productsSoldResult = await ordersCollection
+      .aggregate(productsSoldPipeline)
+      .toArray();
+
+    const productsSoldThisYear =
+      productsSoldResult.length > 0 ? productsSoldResult[0].totalQuantity : 0;
+
+    console.log("xxxxxxxxx product sold this yeser",productsSoldThisYear)
+
+    // 3. Total Users who placed orders THIS YEAR
+    const usersWithOrdersThisYear = await ordersCollection.distinct("userId", {
+      createdAt: { $gte: startOfYear },
+    });
+
+    const totalUsersThisYear = usersWithOrdersThisYear.length;
+
+    // 4. Total Revenue THIS YEAR
+    const revenueThisYearPipeline = [
+      {
+        $match: {
+          status: "Delivered",
+          createdAt: { $gte: startOfYear },
+        },
+      },
+      { $unwind: "$userCart" },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$userCart.price", "$userCart.quantity"],
+            },
+          },
+        },
+      },
+    ];
+
+    const revenueThisYearResult = await ordersCollection
+      .aggregate(revenueThisYearPipeline)
+      .toArray();
+
+    const totalRevenueThisYear =
+      revenueThisYearResult.length > 0
+        ? revenueThisYearResult[0].totalRevenue
+        : 0;
+
+    //5. Last Year Sales by Category (Men/Women)
+    const lastYearSales = await getCurrentYearSalesByCategory();
+
+    // console.log(lastYearSales);
+
+    // 6️⃣ Donut Chart Data: Order Status Counts (This Month)
+    const statusData = await db
+      .collection(collection.ORDERS_COLLECTION)
+      .aggregate([
+        { $match: { createdAt: { $gte: startOfMonth, $lte: now } } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ])
+      .toArray();
+
+    const donutLabels = statusData.map((item) => item._id);
+    const donutData = statusData.map((item) => item.count);
+    // console.log("Donut Chart Data:", { donutLabels, donutData });
+    // Render dashboard with statistics
+
+    console.log("✅❌✅❌",deliveredOrdersThisYear,
+        productsSoldThisYear,
+        totalUsersThisYear,)
+
     // Render dashboard
     res.render("admin/dashboard", {
       layout: "admin",
       title: "Admin Dashboard",
+      stats: {
+        deliveredOrdersThisYear,
+        productsSoldThisYear,
+        totalUsersThisYear,
+        totalRevenueThisYear: totalRevenueThisYear.toFixed(2),
+      },
+      menData: JSON.stringify(lastYearSales.menData),
+      womenData: JSON.stringify(lastYearSales.womenData),
+      unisexData: JSON.stringify(lastYearSales.unisexData),
+      donutLabels: JSON.stringify(donutLabels),
+      donutData: JSON.stringify(donutData),
     });
   } catch (error) {
     res.status(500).send("Something went wrong loading the dashboard.");
@@ -25,11 +147,13 @@ export const adminAddProductPage = async (req, res) => {
   console.log("Admin AddProduct route working 🚀");
 
   try {
+    
     res.render("admin/add-product", {
       layout: "admin",
       title: "Admin - Add Product",
     });
   } catch (error) {
+    console.log("Dashboard error:", error);
     res.status(500).send("Something went wrong loading the Add Product page.");
   }
 };
@@ -52,7 +176,7 @@ export const adminProductsListPage = async (req, res) => {
 };
 
 export const adminProductEditPage = async (req, res) => {
-  console.log("adminProductEditPage page function called >>>>>>>>>>");
+  // console.log("adminProductEditPage page function called >>>>>>>>>>");
   try {
     const productId = req.params.id;
     // console.log(productId);
@@ -203,7 +327,7 @@ export const adminOrderDetailsPage = async (req, res) => {
       0
     );
 
-    console.log("cart with product Details>>>>>", cartWithProductDetails);
+    // console.log("cart with product Details>>>>>", cartWithProductDetails);
 
     // Render the order details page
     res.render("admin/order-details", {
@@ -257,7 +381,7 @@ export const usersListPage = async (req, res) => {
 };
 
 export const blockUnblockUser = async (req, res) => {
-  console.log("Block/Unblock User route working 🚀");
+  // console.log("Block/Unblock User route working 🚀");
   // console.log(req.params.id);
   // console.log(req.query.status);
   try {

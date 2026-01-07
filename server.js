@@ -10,8 +10,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 
 import cookieParser from "cookie-parser";
 import { verifyUser } from "./middleware/verifyUser.js";
-import { connect } from "http2";
-import connectDB from "./config/db.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -44,8 +42,6 @@ app.use(
   express.static(path.join(__dirname, "public/userAssets"))
 );
 
-await connectDB();
-
 // Apply user verification before user routes
 app.use((req, res, next) => {
   // Skip for admin routes
@@ -64,7 +60,7 @@ app.use("/", userRoutes);
 
 app.listen(PORT, () => {
   console.log(
-    `process ID ${process.pid}:server running on PORT ${PORT} in dev mode`
+    `💻 Server running on http://localhost:${PORT} in ${process.env.NODE_ENV} mode`
   );
 });
 
@@ -87,6 +83,12 @@ app.engine(
       },
       ifEquals: function (arg1, arg2, options) {
         return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+      },
+      gt: function (a, b) {
+        return a > b;
+      },
+      le: function (a, b) {
+        return a <= b;
       },
     },
   })

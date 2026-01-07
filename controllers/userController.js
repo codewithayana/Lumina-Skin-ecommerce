@@ -71,7 +71,7 @@ export const LoginPage = async (req, res) => {
 };
 
 export const signupPage = async (req, res) => {
-  console.log("🚀 signupPage function called");
+  // console.log("🚀 signupPage function called");
   try {
     res.render("user/signupPage", {
       title: "Signup - Lumina Skin",
@@ -227,7 +227,7 @@ export const removeFromCart = async (req, res) => {
 };
 
 export const checkoutPage = async (req, res) => {
-  console.log(">>>>called checkout function");
+  // console.log(">>>>called checkout function");
   try {
     const userId = req.loggedInUser?.id;
     if (!userId) {
@@ -351,8 +351,6 @@ export const placeOrder = async (req, res) => {
       const product = await db
         .collection(collection.PRODUCTS_COLLECTION)
         .findOne({ productId: item.productId });
-
-      console.log("???????? Product", product);
 
       if (!product) {
         return res
