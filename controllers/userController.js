@@ -403,7 +403,6 @@ export const placeOrder = async (req, res) => {
 };
 
 export const orderSuccess = async (req, res) => {
-
   try {
     const userId = req.loggedInUser?.id;
     if (!userId) return res.redirect("/login");
@@ -451,7 +450,6 @@ export const orderSuccess = async (req, res) => {
 };
 
 export const getOrderHistory = async (req, res) => {
-
   try {
     const userId = req.loggedInUser?.id;
     if (!userId) return res.redirect("/login");
@@ -544,17 +542,14 @@ export const getWishlistPage = async (req, res) => {
           price: product.discountPrice || product.price,
           image: product.thumbnail,
           shortDescription: product.shortDescription || "",
-          stockStatus: product.stockStatus> 0,       
+          stockStatus: product.stockStatus > 0,
         };
       })
       .filter(Boolean);
 
     res.render("user/wishlist", { title: "Your Wishlist", wishlist });
-
   } catch (err) {
     console.error("❌ Wishlist Page Error:", err);
     res.redirect("/");
   }
 };
-
-
